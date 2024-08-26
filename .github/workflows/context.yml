@@ -35,8 +35,7 @@ jobs:
       - name: check if contains '#skip' 3
         run: echo "${{ github.env.SKIP_TAG_AND_DEPLOY }}"
 
-  tag_release:
-    if: ${{ github.event_name == 'push' && github.env.SKIP_TAG_AND_DEPLOY == 'false' }}
+  check_env:
     needs: [check_github_context]
     runs-on: ubuntu-20.04
     steps:
