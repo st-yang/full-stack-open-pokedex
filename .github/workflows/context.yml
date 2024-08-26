@@ -5,8 +5,11 @@ on:
     branches:
       - main
 
+env:
+  SKIP_TAG_AND_DEPLOY: ${{ contains(join(github.event.commits.*.message, ' '), '#skip') }}
+
 jobs:
-  a_test_job:
+  check_github_context:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
@@ -22,7 +25,26 @@ jobs:
         env:
           COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
         run: echo "$COMMIT_MESSAGES"
-      - name: check if contains '#skip'
-        env:
-          SKIP_TAG_AND_DEPLOY: ${{ contains(join(github.event.commits.*.message, ' '), '#skip') }}
+
+      - name: check if contains '#skip' 1
         run: echo "$SKIP_TAG_AND_DEPLOY"
+
+      - name: check if contains '#skip' 2
+        run: echo "${{ env.SKIP_TAG_AND_DEPLOY }}"
+
+      - name: check if contains '#skip' 3
+        run: echo "${{ github.env.SKIP_TAG_AND_DEPLOY }}"
+
+  tag_release:
+    if: ${{ github.event_name == 'push' && github.env.SKIP_TAG_AND_DEPLOY == 'false' }}
+    needs: [check_github_context]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: check if contains '#skip' 1
+        run: echo "$SKIP_TAG_AND_DEPLOY"
+
+      - name: check if contains '#skip' 2
+        run: echo "${{ env.SKIP_TAG_AND_DEPLOY }}"
+
+      - name: check if contains '#skip' 3
+        run: echo "${{ github.env.SKIP_TAG_AND_DEPLOY }}"
