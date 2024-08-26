@@ -43,6 +43,15 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
+      - name: check if contains '#skip 1'
+        run: echo "$SKIP_TAG_AND_DEPLOY"
+
+      - name: check if contains '#skip 2'
+        run: echo "${{ env.SKIP_TAG_AND_DEPLOY }}"
+
+      - name: check if contains '#skip 3'
+        run: echo "${{ github.env.SKIP_TAG_AND_DEPLOY }}"
+
       - name: Trigger deployment
         if: ${{ github.event_name == 'push' && !env.SKIP_TAG_AND_DEPLOY }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
