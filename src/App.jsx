@@ -1,16 +1,17 @@
 import React from 'react'
-import { BrowserRouter as Router, Routes, Route, useMatch } from 'react-router-dom'
-import { useApi } from './useApi'
-import LoadingSpinner from './LoadingSpinner'
+import { Route, Routes, useMatch } from 'react-router-dom'
 import ErrorMessage from './ErrorMessage'
-import PokemonPage from './PokemonPage'
+import LoadingSpinner from './LoadingSpinner'
 import PokemonList from './PokemonList'
+import PokemonPage from './PokemonPage'
+import { useApi } from './useApi'
 
-const mapResults = (({ results }) => results.map(({ url, name }) => ({
-  url,
-  name,
-  id: parseInt(url.match(/\/(\d+)\//)[1])
-})))
+const mapResults = ({ results }) =>
+  results.map(({ url, name }) => ({
+    url,
+    name,
+    id: parseInt(url.match(/\/(\d+)\//)[1]),
+  }))
 
 const App = () => {
   const match = useMatch('/pokemon/:name')
@@ -34,10 +35,12 @@ const App = () => {
 
   return (
     <Routes>
-      <Route exact path="/" element={<PokemonList pokemonList={pokemonList} />} />
-      <Route exact path="/pokemon/:name" element={
-        <PokemonPage pokemonList={pokemonList} previous={previous} next={next} />
-      } />
+      <Route exact path='/' element={<PokemonList pokemonList={pokemonList} />} />
+      <Route
+        exact
+        path='/pokemon/:name'
+        element={<PokemonPage pokemonList={pokemonList} previous={previous} next={next} />}
+      />
     </Routes>
   )
 }
