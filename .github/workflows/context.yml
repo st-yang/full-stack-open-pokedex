@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  SKIP_TAG_AND_DEPLOY: ${{ contains(join(github.event.commits.*.message, ' '), '#skip') }}
+  SKIP_TAG_AND_DEPLOY: contains(join(github.event.commits.*.message, ' '), '#skip')
 
 jobs:
   check_github_context:
