@@ -47,6 +47,28 @@ jobs:
         if: ${{ github.event_name == 'push' && env.SKIP_TAG_AND_DEPLOY == 'false' }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
 
+      - name: Successful deployment notification
+        if: ${{ success() && github.event_name == 'push' && env.SKIP_TAG_AND_DEPLOY == 'false' }}
+        uses: stegzilla/discord-notify@v4
+        with:
+          colour: '#00FF00'
+          title: A new version of Pokedex deployed.
+          message: 'by ${{ github.actor }}'
+          webhook_url: ${{ secrets.NOTIFICATION_WEBHOOK }}
+          avatar_url: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+          username: GitHub
+
+      - name: Failed pipeline notification
+        if: ${{ failure() }}
+        uses: stegzilla/discord-notify@v4
+        with:
+          colour: '#FF0000'
+          title: Build failed.
+          message: 'commit ${{ github.event.pull_request.url }} by ${{ github.event.pull_request.user.login }} broke the build :('
+          webhook_url: ${{ secrets.NOTIFICATION_WEBHOOK }}
+          avatar_url: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+          username: GitHub
+
   tag_release:
     if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     needs: [simple_deployment_pipeline]
