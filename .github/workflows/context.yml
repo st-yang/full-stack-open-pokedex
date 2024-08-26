@@ -36,6 +36,7 @@ jobs:
         run: echo "${{ github.env.SKIP_TAG_AND_DEPLOY }}"
 
   check_env:
+    if: ${{ github.event_name == 'push' }}
     needs: [check_github_context]
     runs-on: ubuntu-20.04
     steps:

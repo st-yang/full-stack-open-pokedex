@@ -57,7 +57,7 @@ jobs:
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
 
   tag_release:
-    if: ${{ github.event_name == 'push' && github.env.SKIP_TAG_AND_DEPLOY == 'false' }}
+    if: ${{ github.event_name == 'push' }}
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-20.04
     permissions:
@@ -68,6 +68,7 @@ jobs:
           fetch-depth: '0'
 
       - name: Bump version and push tag
+        if: ${{ env.SKIP_TAG_AND_DEPLOY == 'false' }}
         uses: anothrNick/github-tag-action@1.70.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
