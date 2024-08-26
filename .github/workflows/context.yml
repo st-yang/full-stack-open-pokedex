@@ -1,0 +1,58 @@
+name: Testing stuff
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  SKIP_TAG_AND_DEPLOY: ${{ contains(join(github.event.commits.*.message, ' '), '#skip') }}
+
+jobs:
+  check_github_context:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: github context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: commits
+        env:
+          COMMITS: ${{ toJson(github.event.commits) }}
+        run: echo "$COMMITS"
+      - name: commit messages
+        env:
+          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
+        run: echo "$COMMIT_MESSAGES"
+
+      - name: check if contains '#skip' 1
+        run: echo "$SKIP_TAG_AND_DEPLOY"
+
+      - name: check if contains '#skip' 2
+        run: echo "${{ env.SKIP_TAG_AND_DEPLOY }}"
+
+      - name: check if contains '#skip' 3
+        run: echo "${{ github.env.SKIP_TAG_AND_DEPLOY }}"
+
+      - name: skip if true
+        if: ${{ github.event_name == 'push' && env.SKIP_TAG_AND_DEPLOY == 'false' }}
+        run: echo "not skipped"
+
+  check_env:
+    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+    needs: [check_github_context]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: check if contains '#skip' 1
+        run: echo "$SKIP_TAG_AND_DEPLOY"
+
+      - name: check if contains '#skip' 2
+        run: echo "${{ env.SKIP_TAG_AND_DEPLOY }}"
+
+      - name: check if contains '#skip' 3
+        run: echo "${{ github.env.SKIP_TAG_AND_DEPLOY }}"
+
+      - name: skip if true
+        if: ${{ github.event_name == 'push' && env.SKIP_TAG_AND_DEPLOY == 'false' }}
+        run: echo "not skipped"
