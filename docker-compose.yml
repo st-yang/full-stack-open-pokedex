@@ -1,0 +1,17 @@
+services:
+  pokedex:
+    image: eranikus424/pokedex
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    container_name: pokedex
+  pokedex-multi-stage:
+    image: eranikus424/pokedex:multi-stage
+    build:
+      context: .
+      dockerfile: Dockerfile.multi-stage
+    ports:
+      - 80:80
+    container_name: pokedex-multi-stage
