@@ -23,3 +23,6 @@ jobs:
           context: .
           push: true
           tags: eranikus424/pokedex:latest
+
+      - name: Trigger deployment
+        run: curl ${{ secrets.DOCKER_RENDER_DEPLOY_HOOK }}
